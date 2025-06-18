@@ -1,0 +1,15 @@
+{
+    "cmake.cmakePath": "cube-cmake",
+    "cmake.configureArgs": [
+        "-DCMAKE_COMMAND=cube-cmake"
+    ],
+    "cmake.preferredGenerators": [
+        "Ninja"
+    ],
+    "files.associations": {
+        "stm32u5xx.h": "c",
+        "fdcan_config.h": "c",
+        "main.h": "c",
+        "log.h": "c"
+    }
+}

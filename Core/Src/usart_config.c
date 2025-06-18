@@ -1,0 +1,5 @@
+#include "usart_config.h"
+
+void __io_putchar(int ch) {
+    HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, HAL_MAX_DELAY);
+}
