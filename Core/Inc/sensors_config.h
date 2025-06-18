@@ -10,8 +10,12 @@ extern "C" {
 
 // defines ----------------------------------------------
 #define LSM6DSR_ADDR        (0x6A << 1)  
-#define LSM6DSR_CTRL1_XL    0x10 // REGISTRADOR REFERENTE À VELOCIDADE DO ACELERÔMETRO
-#define LSM6DSR_CTRL2_G     0x11 // REGISTRADOR REFERENTE À VELOCIDADE DO GYROSCÓPIO
+
+#define LSM6DSR_CTRL1_XL    0x10 // Endereço registrador do acelerômetro
+#define LSM6DSR_CTRL1_XL_ODR 0x5C //  ODR=208 Hz, escala 8g
+
+#define LSM6DSR_CTRL2_G     0x11 // Endereço registrador do giroscópio
+#define LSM6DSR_CTRL2_G_ODR 0x5C // ODR=208 Hz, +-2000 dps
 
 #define LSM6DSR_SLV0_ADDR   0x15
 #define LSM6DSR_SLV0_SUBADD 0x16
@@ -24,18 +28,25 @@ extern "C" {
 
 #define LSM6DSR_OUTX_L_G    0x22
 #define LSM6DSR_OUTX_L_XL   0x28
-#define LSM6DSR_SENSORHUB1  0x02  // primeiro byte do sensor hub
+#define LSM6DSR_SENSORHUB1  0x02 
 
 extern I2C_HandleTypeDef hi2c2;
 
-HAL_StatusTypeDef I2C_Read(uint16_t DevAddress, uint8_t Reg, uint8_t *pData, uint16_t Size);
-HAL_StatusTypeDef I2C_Write(uint16_t DevAddress, uint8_t Reg, uint8_t *pData, uint16_t Size);
-void LSM6DSR_Init(void);
-void Configure_SensorHub_LIS3MDL(void);
-void LIS3MDL_Init(void);
-void Read_Accelerometer(int16_t accelerometer[3]);
-void Read_Gyroscope(int16_t gyroscope[3]);
-void Read_Magnetometer(int16_t magnetometer[3]);
+// Lê e coloca valores do I2C
+HAL_StatusTypeDef SENSORS_I2C_Read(uint16_t DevAddress, uint8_t Reg, uint8_t *pData, uint16_t Size);
+HAL_StatusTypeDef SENSORS_I2C_Write(uint16_t DevAddress, uint8_t Reg, uint8_t *pData, uint16_t Size);
+
+// Inicia os sensores
+void SENSORS_LSM6DSR_Init(void);
+void SENSORS_Configure_SensorHub_LIS3MDL(void);
+void SENSORS_LIS3MDL_Init(void);
+
+// Lê os sensores
+void SENSORS_Read_Accelerometer(int16_t* accelerometer);
+void SENSORS_Read_Gyroscope(int16_t* gyroscope);
+void SENSORS_Read_Magnetometer(int16_t* magnetometer);
+
+void SENSORS_Print(int16_t* data);
 
 #ifdef __cplusplus
 }

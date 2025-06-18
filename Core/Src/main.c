@@ -41,7 +41,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 FDCAN_HandleTypeDef hfdcan1;
-
+uint32_t current_can_id = ACEL_CAN_ID;
 I2C_HandleTypeDef hi2c2;
 
 UART_HandleTypeDef huart1;
@@ -100,47 +100,41 @@ int main(void)
   MX_FDCAN1_Init();
   MX_I2C2_Init();
   /* USER CODE BEGIN 2 */
-  LSM6DSR_Init();
-  Configure_SensorHub_LIS3MDL();
-  LIS3MDL_Init();
+  SENSORS_LSM6DSR_Init();
+  SENSORS_Configure_SensorHub_LIS3MDL();
+  SENSORS_LIS3MDL_Init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  uint8_t TxData[8] = {0, 1, 2, 3, 4, 5, 6, 7};
+  uint8_t TxData[8] = {0};
   int16_t Acel[3];
   int16_t Gyro[3];
   int16_t Mag[3];
-  int button_state = 0;
   LOG("Entrando no loop principal");
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    Read_Accelerometer(Acel);
-    Read_Gyroscope(Gyro);
-    Read_Magnetometer(Mag);
+    SENSORS_Read_Accelerometer(Acel);
+    SENSORS_Read_Gyroscope(Gyro);
+    SENSORS_Read_Magnetometer(Mag);
+    //SENSORS_Print(Acel);
 
-    if (HAL_GPIO_ReadPin(BUTTON_GPIO_Port, BUTTON_Pin) == GPIO_PIN_SET) {
-      button_state++;
-      if (button_state == 3) {
-        button_state = 0; 
-      }
-    }
+    // Envia aceleração
+    FDCAN_Change_TxID(ACEL_CAN_ID);
+    FDCAN_Add_Sensor_Data(TxData, Acel);
+    HAL_StatusTypeDef CAN_status = FDCAN_SendMessage(TxData); // HAL_OK or HAL_ERROR
+    HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, !CAN_status); // CAN ESTA FUNCIONANDO
 
-    if (button_state == 0){
-      printf("Accel: X=%d, Y=%d, Z=%d\n", Acel[0], Acel[1], Acel[2]);
-    } else if (button_state == 1) {
-      printf("Gyro: X=%d, Y=%d, Z=%d\n", Gyro[0], Gyro[1], Gyro[2]);
-    } else if (button_state == 2) {
-      printf("Mag: X=%d, Y=%d, Z=%d\n", Mag[0], Mag[1], Mag[2]);
-    }
-  //  HAL_StatusTypeDef CAN_status = FDCAN_SendMessage(TxData); // HAL_OK or HAL_ERROR
-  //  HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, !CAN_status); // CAN ESTA FUNCIONANDO
+    // Envia giroscpio
+    FDCAN_Change_TxID(GYRO_CAN_ID);
+    FDCAN_Add_Sensor_Data(TxData, Gyro);
+    CAN_status = FDCAN_SendMessage(TxData); // HAL_OK or HAL_ERROR
+    HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, !CAN_status); // CAN ESTA FUNCIONANDO
 
-
-    HAL_Delay(500);
+    HAL_Delay(100);
   }
   /* USER CODE END 3 */
 }
@@ -260,7 +254,7 @@ static void MX_FDCAN1_Init(void)
   HAL_NVIC_SetPriority(FDCAN1_IT1_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(FDCAN1_IT1_IRQn);
   
-  TxHeader.Identifier = IMU_ID_CAN;
+  TxHeader.Identifier = CURRENT_CAN_ID;
   TxHeader.IdType = FDCAN_STANDARD_ID;
   TxHeader.TxFrameType = FDCAN_DATA_FRAME;
   TxHeader.DataLength = FDCAN_DLC_BYTES_8;

@@ -4,33 +4,41 @@
 extern "C" {
 #endif
 
-// includes ------------------------------------------------------------------
+// INCLUDES ------------------------------------------------------------------
 #include "stm32u5xx.h"
 #include "main.h"
 #include "log.h"
 
-// defines -------------------------------------------------------------------
+// DEFINES -------------------------------------------------------------------
 extern FDCAN_HandleTypeDef hfdcan1;
-extern FDCAN_FilterTypeDef sFilterConfig; // Filtro
-extern FDCAN_RxHeaderTypeDef RxHeader; // Header do recebimento
 extern FDCAN_TxHeaderTypeDef TxHeader; // Header do envio
-extern uint8_t RxData[8]; // Dados recebidos
 extern uint32_t TxMailbox; // Caixa de envio
 
-// IDs
-#define IMU_ID_CAN 0x001
+// IDs -----------------------------------------------------------------------
+#define ACEL_CAN_ID 0x123
+#define GYRO_CAN_ID 0x124
+extern uint32_t CURRENT_CAN_ID;
 
-// Filter Configurations
-#define FDCAN_FILTER_ID1 0x000 // Esses são os bits a serem comparados
-#define FDCAN_FILTER_ID2 0x7FF  // Essa aqui é a mascara
+// ISSO DAQUI É SÓ PRA TESTAR RECEPÇÃO RECURSIVA -----------------------------
+#define FDCAN_FILTER_ID1 0x000 
+#define FDCAN_FILTER_ID2 0x7FF  
+extern FDCAN_FilterTypeDef sFilterConfig; 
+extern uint8_t RxData[8]; 
+extern FDCAN_RxHeaderTypeDef RxHeader; 
 
+// SENDING
+void FDCAN_Change_TxID(uint32_t new_ID);
 HAL_StatusTypeDef FDCAN_SendMessage(uint8_t *TxData);
+void FDCAN_Add_Sensor_Data(uint8_t *TxData, int16_t *sensorData);
 
-void printReceivedMessage();
+// RESTART CAN
+void FDCAN_Restart();
 
+// RECEPÇÃO
+void FDCAN_Print_RxMessage();
 void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs);
 
-void reabrirCan();
+
 
 #ifdef __cplusplus
 }
