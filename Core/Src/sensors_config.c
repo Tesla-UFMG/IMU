@@ -41,31 +41,40 @@ void SENSORS_LIS3MDL_Init(void) {
     SENSORS_I2C_Write(LIS3MDL_ADDR, LIS3MDL_CTRL_REG3, &data, 1);
 }
 
-void SENSORS_Read_Accelerometer(int16_t* accelerometer) {
-    uint8_t buf[6];
+void SENSORS_8_to_16bits(uint8_t* data, int16_t* output){
+    output[0] = (int16_t)(data[1] << 8 | data[0]); // X
+    output[1] = (int16_t)(data[3] << 8 | data[2]); // Y
+    output[2] = (int16_t)(data[5] << 8 | data[4]); // Z
+}
+
+void SENSORS_Read_Accelerometer_8(uint8_t* buf) {
     HAL_I2C_Mem_Read(&hi2c2, LSM6DSR_ADDR, LSM6DSR_OUTX_L_XL, I2C_MEMADD_SIZE_8BIT, buf, 6, HAL_MAX_DELAY);
-
-    accelerometer[0] = (int16_t)(buf[1] << 8 | buf[0]); // X
-    accelerometer[1] = (int16_t)(buf[3] << 8 | buf[2]); // Y
-    accelerometer[2] = (int16_t)(buf[5] << 8 | buf[4]); // Z
 }
 
-void SENSORS_Read_Gyroscope(int16_t* gyroscope) {
-    uint8_t buf[6];
+void SENSORS_Read_Accelerometer_16(int16_t* buf) {
+    uint8_t buf_8[6];
+    SENSORS_Read_Accelerometer_8(buf_8);
+    SENSORS_8_to_16bits(buf_8, buf);    
+}
+
+void SENSORS_Read_Gyroscope_8(uint8_t* buf) {
     HAL_I2C_Mem_Read(&hi2c2, LSM6DSR_ADDR, LSM6DSR_OUTX_L_G, I2C_MEMADD_SIZE_8BIT, buf, 6, HAL_MAX_DELAY);
-
-    gyroscope[0] = (int16_t)(buf[1] << 8 | buf[0]); // X
-    gyroscope[1] = (int16_t)(buf[3] << 8 | buf[2]); // Y
-    gyroscope[2] = (int16_t)(buf[5] << 8 | buf[4]); // Z
 }
 
-void SENSORS_Read_Magnetometer(int16_t* magnetometer) {
-    uint8_t buf[6];
-    HAL_I2C_Mem_Read(&hi2c2, LSM6DSR_ADDR, LSM6DSR_SENSORHUB1, I2C_MEMADD_SIZE_8BIT, buf, 6, HAL_MAX_DELAY);
+void SENSORS_Read_Gyroscope_16(int16_t* buf) {
+    uint8_t buf_8[6];
+    SENSORS_Read_Gyroscope_8(buf_8);
+    SENSORS_8_to_16bits(buf_8, buf);    
+}
 
-    magnetometer[0] = (int16_t)(buf[1] << 8 | buf[0]); // X
-    magnetometer[1] = (int16_t)(buf[3] << 8 | buf[2]); // Y
-    magnetometer[2] = (int16_t)(buf[5] << 8 | buf[4]); // Z
+void SENSORS_Read_Magnetometer_8(uint8_t* buf) {
+    HAL_I2C_Mem_Read(&hi2c2, LSM6DSR_ADDR, LSM6DSR_SENSORHUB1, I2C_MEMADD_SIZE_8BIT, buf, 6, HAL_MAX_DELAY);
+}
+
+void SENSORS_Read_Magnetometer_16(int16_t* buf) {
+    uint8_t buf_8[6];
+    SENSORS_Read_Magnetometer_8(buf_8);
+    SENSORS_8_to_16bits(buf_8, buf);    
 }
 
 void SENSORS_Print(int16_t* data){

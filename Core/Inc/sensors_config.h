@@ -17,6 +17,8 @@ extern "C" {
 #define LSM6DSR_CTRL2_G     0x11 // Endereço registrador do giroscópio
 #define LSM6DSR_CTRL2_G_ODR 0x5C // ODR=208 Hz, +-2000 dps
 
+
+
 #define LSM6DSR_SLV0_ADDR   0x15
 #define LSM6DSR_SLV0_SUBADD 0x16
 #define LSM6DSR_SLV0_CONFIG 0x14
@@ -42,9 +44,17 @@ void SENSORS_Configure_SensorHub_LIS3MDL(void);
 void SENSORS_LIS3MDL_Init(void);
 
 // Lê os sensores
-void SENSORS_Read_Accelerometer(int16_t* accelerometer);
-void SENSORS_Read_Gyroscope(int16_t* gyroscope);
-void SENSORS_Read_Magnetometer(int16_t* magnetometer);
+void SENSORS_8_to_16bits(uint8_t* data, int16_t* output);
+
+void SENSORS_Read_Accelerometer_8(uint8_t* buf);
+void SENSORS_Read_Accelerometer_16(int16_t* buf);
+
+void SENSORS_Read_Gyroscope_8(uint8_t* buf);
+void SENSORS_Read_Gyroscope_16(int16_t* buf);
+
+void SENSORS_Read_Magnetometer_8(uint8_t* buf);
+void SENSORS_Read_Magnetometer_16(int16_t* buf);
+
 
 void SENSORS_Print(int16_t* data);
 

@@ -109,28 +109,29 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   uint8_t TxData[8] = {0};
   int16_t Acel[3];
-  int16_t Gyro[3];
-  int16_t Mag[3];
+
+  uint8_t acel_8[6];
+  uint8_t gyro_8[6];
   LOG("Entrando no loop principal");
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    SENSORS_Read_Accelerometer(Acel);
-    SENSORS_Read_Gyroscope(Gyro);
-    SENSORS_Read_Magnetometer(Mag);
-    //SENSORS_Print(Acel);
+    SENSORS_Read_Accelerometer_8(acel_8);
+    SENSORS_Read_Gyroscope_8(gyro_8);
+    SENSORS_8_to_16bits(acel_8, Acel);
+    SENSORS_Print(Acel);
 
     // Envia aceleração
     FDCAN_Change_TxID(ACEL_CAN_ID);
-    FDCAN_Add_Sensor_Data(TxData, Acel);
+    FDCAN_Add_Sensor_Data(TxData, acel_8);
     HAL_StatusTypeDef CAN_status = FDCAN_SendMessage(TxData); // HAL_OK or HAL_ERROR
     HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, !CAN_status); // CAN ESTA FUNCIONANDO
 
     // Envia giroscpio
     FDCAN_Change_TxID(GYRO_CAN_ID);
-    FDCAN_Add_Sensor_Data(TxData, Gyro);
+    FDCAN_Add_Sensor_Data(TxData, gyro_8);
     CAN_status = FDCAN_SendMessage(TxData); // HAL_OK or HAL_ERROR
     HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, !CAN_status); // CAN ESTA FUNCIONANDO
 

@@ -29,7 +29,7 @@ extern FDCAN_RxHeaderTypeDef RxHeader;
 // SENDING
 void FDCAN_Change_TxID(uint32_t new_ID);
 HAL_StatusTypeDef FDCAN_SendMessage(uint8_t *TxData);
-void FDCAN_Add_Sensor_Data(uint8_t *TxData, int16_t *sensorData);
+void FDCAN_Add_Sensor_Data(uint8_t *TxData, uint8_t *data);
 
 // RESTART CAN
 void FDCAN_Restart();

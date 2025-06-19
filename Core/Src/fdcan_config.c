@@ -58,15 +58,12 @@ void FDCAN_Restart() {
     }
 }
 
-void FDCAN_Add_Sensor_Data(uint8_t *TxData, int16_t *sensorData) {
-    // Fazendo deslocamento de bits, to fazendo isso porque os sensores retornam 16 bits, e a can transmite só 8
-    TxData[0] = sensorData[0] & 0xFF;        // 8 primeiros bits
-    TxData[1] = (sensorData[0] >> 8) & 0xFF; // 8 ultimos bits...
-    TxData[2] = sensorData[1] & 0xFF;
-    TxData[3] = (sensorData[1] >> 8) & 0xFF;
-    TxData[4] = sensorData[2] & 0xFF;
-    TxData[5] = (sensorData[2] >> 8) & 0xFF;
+void FDCAN_Add_Sensor_Data(uint8_t *TxData, uint8_t *data) {
+    for (int i = 0; i < 6; i++){
+        TxData[i] = data[i];
+    }
 }
+
 
 void FDCAN_Change_TxID(uint32_t new_ID) {
     CURRENT_CAN_ID = new_ID;
