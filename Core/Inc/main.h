@@ -35,6 +35,7 @@ extern "C" {
 #include "fdcan_config.h"
 #include "sensors_config.h"
 #include "log.h"
+#include <stdbool.h>
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
