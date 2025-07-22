@@ -11,13 +11,11 @@ extern "C" {
 // defines ----------------------------------------------
 #define LSM6DSR_ADDR        (0x6A << 1)  
 
-#define LSM6DSR_CTRL1_XL    0x10 // Endereço registrador do acelerômetro
-#define LSM6DSR_CTRL1_XL_ODR 0x5C //  ODR=208 Hz, escala 8g
+#define LSM6DSR_CTRL1_XL     0x10 // Endereço registrador do acelerômetro
+#define LSM6DSR_CTRL1_XL_ODR 0x6C //  ODR=208 Hz, escala 8g
 
 #define LSM6DSR_CTRL2_G     0x11 // Endereço registrador do giroscópio
 #define LSM6DSR_CTRL2_G_ODR 0x5C // ODR=208 Hz, +-2000 dps
-
-
 
 #define LSM6DSR_SLV0_ADDR   0x15
 #define LSM6DSR_SLV0_SUBADD 0x16
@@ -57,7 +55,7 @@ void SENSORS_Read_Magnetometer_16(int16_t* buf);
 
 
 void SENSORS_Print(int16_t* data);
-
+void SENSORS_Print_for_Reconstruction(int id, int16_t* data); // serve para imprimir no formato da reconstrução de pista
 #ifdef __cplusplus
 }
 #endif

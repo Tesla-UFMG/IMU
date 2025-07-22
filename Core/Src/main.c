@@ -108,10 +108,12 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   uint8_t TxData[8] = {0};
-  int16_t Acel[3];
 
-  uint8_t acel_8[6];
-  uint8_t gyro_8[6];
+  uint8_t acel_8[8];
+  int16_t Acel[8];
+
+  uint8_t gyro_8[8];
+  int16_t Gyro[8];
   LOG("Entrando no loop principal");
   while (1)
   {
@@ -119,9 +121,13 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
     SENSORS_Read_Accelerometer_8(acel_8);
-    SENSORS_Read_Gyroscope_8(gyro_8);
     SENSORS_8_to_16bits(acel_8, Acel);
-    SENSORS_Print(Acel);
+
+    SENSORS_Read_Gyroscope_8(gyro_8);
+    SENSORS_8_to_16bits(gyro_8, Gyro);
+    
+    SENSORS_Print_for_Reconstruction(103, Acel);
+    SENSORS_Print_for_Reconstruction(104, Gyro);
 
     // Envia aceleração
     FDCAN_Change_TxID(ACEL_CAN_ID);
@@ -135,7 +141,7 @@ int main(void)
     CAN_status = FDCAN_SendMessage(TxData); // HAL_OK or HAL_ERROR
     HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, !CAN_status); // CAN ESTA FUNCIONANDO
 
-    HAL_Delay(100);
+    HAL_Delay(20);
   }
   /* USER CODE END 3 */
 }

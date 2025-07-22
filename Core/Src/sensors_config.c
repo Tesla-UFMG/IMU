@@ -11,6 +11,7 @@ HAL_StatusTypeDef SENSORS_I2C_Write(uint16_t DevAddress, uint8_t Reg, uint8_t *p
 void SENSORS_LSM6DSR_Init(void) {
     uint8_t data = LSM6DSR_CTRL1_XL_ODR; 
     SENSORS_I2C_Write(LSM6DSR_ADDR, LSM6DSR_CTRL1_XL, &data, 1); // Configura o acelerometro
+    
     data = LSM6DSR_CTRL2_G_ODR;
     SENSORS_I2C_Write(LSM6DSR_ADDR, LSM6DSR_CTRL2_G, &data, 1); // Configura o giroscopio
 }
@@ -45,6 +46,11 @@ void SENSORS_8_to_16bits(uint8_t* data, int16_t* output){
     output[0] = (int16_t)(data[1] << 8 | data[0]); // X
     output[1] = (int16_t)(data[3] << 8 | data[2]); // Y
     output[2] = (int16_t)(data[5] << 8 | data[4]); // Z
+
+    for (size_t i = 3; i < 8; i++){
+        output[i] = 0;
+    }
+
 }
 
 void SENSORS_Read_Accelerometer_8(uint8_t* buf) {
@@ -79,4 +85,15 @@ void SENSORS_Read_Magnetometer_16(int16_t* buf) {
 
 void SENSORS_Print(int16_t* data){
     printf("X: %d, Y: %d, Z: %d\n", data[0], data[1], data[2]);
+}
+
+void SENSORS_Print_for_Reconstruction(int id, int16_t* data) {
+    printf("%d,", id);
+    size_t vecSize = 8;
+    for (size_t i = 0; i < vecSize; i++){
+        printf("%d", data[i]);
+        if (i < vecSize - 1)
+            putchar(',');
+    }
+    putchar('\n');
 }

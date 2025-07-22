@@ -7,7 +7,7 @@ extern "C" {
 
 #include "usart_config.h"
 
-#define PRINT_LOG_MESSAGES true
+#define PRINT_LOG_MESSAGES false
 
 #define LOG(fmt, ...) \
 if (PRINT_LOG_MESSAGES) \
