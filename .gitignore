@@ -2,4 +2,3 @@ build
 mx.scratch
 !.settings.settings/bundles-lock.store.json
 /build
-.vscode/
