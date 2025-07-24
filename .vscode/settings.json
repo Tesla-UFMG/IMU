@@ -1,5 +1,5 @@
 {
-    "cmake.cmakePath": "C:\\ST\\STM32CubeCLT_1.18.0\\CMake\\bin\\cmake.exe",
+    "cmake.cmakePath": "cube-cmake",
     "cmake.configureArgs": [
         "-DCMAKE_COMMAND=cube-cmake"
     ],
