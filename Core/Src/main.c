@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "cmsis_os2.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -52,6 +53,7 @@ UART_HandleTypeDef huart1;
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
+void MX_FREERTOS_Init(void);
 static void MX_GPIO_Init(void);
 static void MX_USART1_UART_Init(void);
 static void MX_ICACHE_Init(void);
@@ -105,43 +107,25 @@ int main(void)
   SENSORS_LIS3MDL_Init();
   /* USER CODE END 2 */
 
+  /* Init scheduler */
+  osKernelInitialize();
+
+  /* Call init function for freertos objects (in app_freertos.c) */
+  MX_FREERTOS_Init();
+
+  /* Start scheduler */
+  osKernelStart();
+
+  /* We should never get here as control is now taken by the scheduler */
+
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  uint8_t TxData[8] = {0};
 
-  uint8_t acel_8[8];
-  int16_t Acel[8];
-
-  uint8_t gyro_8[8];
-  int16_t Gyro[8];
-  LOG("Entrando no loop principal");
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    SENSORS_Read_Accelerometer_8(acel_8);
-    SENSORS_8_to_16bits(acel_8, Acel);
-
-    SENSORS_Read_Gyroscope_8(gyro_8);
-    SENSORS_8_to_16bits(gyro_8, Gyro);
-    
-    SENSORS_Print_for_Reconstruction(103, Acel);
-    SENSORS_Print_for_Reconstruction(104, Gyro);
-
-    // Envia aceleração
-    FDCAN_Change_TxID(ACEL_CAN_ID);
-    FDCAN_Add_Sensor_Data(TxData, acel_8);
-    HAL_StatusTypeDef CAN_status = FDCAN_SendMessage(TxData); // HAL_OK or HAL_ERROR
-    HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, !CAN_status); // CAN ESTA FUNCIONANDO
-
-    // Envia giroscpio
-    FDCAN_Change_TxID(GYRO_CAN_ID);
-    FDCAN_Add_Sensor_Data(TxData, gyro_8);
-    CAN_status = FDCAN_SendMessage(TxData); // HAL_OK or HAL_ERROR
-    HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, !CAN_status); // CAN ESTA FUNCIONANDO
-
-    HAL_Delay(20);
   }
   /* USER CODE END 3 */
 }
@@ -474,7 +458,6 @@ void Error_Handler(void)
   LOG("Um erro ocorreu");
   while (1) {
     /* USER CODE END WHILE */
-    HAL_Delay(1000);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END Error_Handler_Debug */
