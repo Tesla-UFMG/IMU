@@ -164,8 +164,8 @@ void StartReadSensors(void *argument)
     SENSORS_Read_Gyroscope_8(gyro_8);
     SENSORS_8_to_16bits(gyro_8, gyro_16);
 
-    SENSORS_Print_for_Reconstruction(103, acel_16);
-    SENSORS_Print_for_Reconstruction(104, gyro_16);
+    SENSORS_Print_for_Reconstruction(0x103, acel_16);
+    SENSORS_Print_for_Reconstruction(0x104, gyro_16);
 
     // Libera o semáforo
     osSemaphoreRelease(newSensorDataAvailableHandle);
