@@ -17,6 +17,7 @@ extern uint32_t TxMailbox; // Caixa de envio
 // IDs -----------------------------------------------------------------------
 #define ACEL_CAN_ID 0x103
 #define GYRO_CAN_ID 0x104
+#define TEMP_CAN_ID 0x105
 extern uint32_t CURRENT_CAN_ID;
 
 // ISSO DAQUI É SÓ PRA TESTAR RECEPÇÃO RECURSIVA -----------------------------

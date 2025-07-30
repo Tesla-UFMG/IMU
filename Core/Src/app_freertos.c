@@ -49,6 +49,10 @@
 
   uint8_t gyro_8[8];
   int16_t gyro_16[8];
+
+  uint8_t temp_8[8];
+  int16_t temp_16[8];
+
 /* USER CODE END Variables */
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
@@ -164,8 +168,12 @@ void StartReadSensors(void *argument)
     SENSORS_Read_Gyroscope_8(gyro_8);
     SENSORS_8_to_16bits(gyro_8, gyro_16);
 
-    SENSORS_Print_for_Reconstruction(0x103, acel_16);
-    SENSORS_Print_for_Reconstruction(0x104, gyro_16);
+    //SENSORS_Read_Gyroscope_8(temp_8);
+    //SENSORS_8_to_16bits(temp_8, temp_16);
+
+    SENSORS_Print_for_Reconstruction(ACEL_CAN_ID, acel_16);
+    SENSORS_Print_for_Reconstruction(GYRO_CAN_ID, gyro_16);
+    //SENSORS_Print_for_Reconstruction(TEMP_CAN_ID, temp_16);
 
     // Libera o semáforo
     osSemaphoreRelease(newSensorDataAvailableHandle);
@@ -190,6 +198,7 @@ void StartSendToCAN(void *argument)
   for(;;){
     // Espera até um novo dado chegar
     osSemaphoreAcquire(newSensorDataAvailableHandle, osWaitForever);
+    while (HAL_GPIO_ReadPin(BUTTON_GPIO_Port, BUTTON_Pin) != SET);
 
     // Envia aceleração
     FDCAN_Change_TxID(ACEL_CAN_ID);
@@ -202,6 +211,13 @@ void StartSendToCAN(void *argument)
     FDCAN_Add_Sensor_Data(TxData, gyro_8);
     CAN_status = FDCAN_SendMessage(TxData); // HAL_OK or HAL_ERROR
     HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, !CAN_status); // CAN ESTA FUNCIONANDO
+
+    // Envia temperatura
+    // FDCAN_Change_TxID(TEMP_CAN_ID);
+    // FDCAN_Add_Sensor_Data(TxData, temp_8);
+    // CAN_status = FDCAN_SendMessage(TxData); // HAL_OK or HAL_ERROR
+    // HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, !CAN_status); // CAN ESTA FUNCIONANDO
+    
 
     osDelay(20);
   }

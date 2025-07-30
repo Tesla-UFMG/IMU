@@ -36,6 +36,7 @@ extern "C" {
 #include "sensors_config.h"
 #include "log.h"
 #include <stdbool.h>
+#include <string.h>
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

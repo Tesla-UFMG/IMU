@@ -9,27 +9,42 @@ extern "C" {
 #include "main.h"
 
 // defines ----------------------------------------------
-#define LSM6DSR_ADDR        (0x6A << 1)  
 
-#define LSM6DSR_CTRL1_XL     0x10 // Endereço registrador do acelerômetro
+/* ------------------ LSM6DSR ------------------ */
+// Endereço do LSM6DSR
+#define LSM6DSR_ADDR        (0x6A << 1)   
+
+// RANGE DO ACELEROMETRO
+#define LSM6DSR_CTRL1_XL     0x10 
 #define LSM6DSR_CTRL1_XL_ODR 0x6C //  ODR=208 Hz, escala 8g
 
-#define LSM6DSR_CTRL2_G     0x11 // Endereço registrador do giroscópio
+// RANGE DO GIROSCOPIO
+#define LSM6DSR_CTRL2_G     0x11 
 #define LSM6DSR_CTRL2_G_ODR 0x5C // ODR=208 Hz, +-2000 dps
+
+// REGISTRADORES DE SAÍDA
+#define LSM6DSR_OUT_TEMP_L  0x20 // Temperatura                                                                                                                                      \Zemperatura
+
+#define LSM6DSR_OUTX_L_G    0x22 // Giroscópio 
+
+#define LSM6DSR_OUTX_L_XL   0x28 // Acelerometro
+/* -------------------------------------------------- */
+
+/* ------------------ LIS2MDL ------------------ */
+// Enderelo do LIS2MDL
+#define LIS3MDL_ADDR        (0x1C << 1)
+
+// Registradores de range do LIS2MDL
+#define LIS3MDL_CTRL_REG1   0x20
+#define LIS3MDL_CTRL_REG2   0x21
+#define LIS3MDL_CTRL_REG3   0x22
 
 #define LSM6DSR_SLV0_ADDR   0x15
 #define LSM6DSR_SLV0_SUBADD 0x16
 #define LSM6DSR_SLV0_CONFIG 0x14
 
-#define LIS3MDL_ADDR        (0x1C << 1)
-#define LIS3MDL_CTRL_REG1   0x20
-#define LIS3MDL_CTRL_REG2   0x21
-#define LIS3MDL_CTRL_REG3   0x22
-
-#define LSM6DSR_OUTX_L_G    0x22
-#define LSM6DSR_OUTX_L_XL   0x28
 #define LSM6DSR_SENSORHUB1  0x02 
-
+/* -------------------------------------------------- */
 extern I2C_HandleTypeDef hi2c2;
 
 // Lê e coloca valores do I2C
@@ -53,9 +68,12 @@ void SENSORS_Read_Gyroscope_16(int16_t* buf);
 void SENSORS_Read_Magnetometer_8(uint8_t* buf);
 void SENSORS_Read_Magnetometer_16(int16_t* buf);
 
+void SENSORS_Read_Temperature_8(uint8_t* buf);
+void SENSORS_Read_Temperature_16(int16_t* buf);
+
 
 void SENSORS_Print(int16_t* data);
-void SENSORS_Print_for_Reconstruction(int id, int16_t* data); // serve para imprimir no formato da reconstrução de pista
+void SENSORS_Print_for_Reconstruction(uint32_t id, int16_t* data); // serve para imprimir no formato da reconstrução de pista
 #ifdef __cplusplus
 }
 #endif

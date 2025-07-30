@@ -43,14 +43,13 @@ void SENSORS_LIS3MDL_Init(void) {
 }
 
 void SENSORS_8_to_16bits(uint8_t* data, int16_t* output){
+    memset(output, 0, 8);
+     
     output[0] = (int16_t)(data[1] << 8 | data[0]); // X
     output[1] = (int16_t)(data[3] << 8 | data[2]); // Y
     output[2] = (int16_t)(data[5] << 8 | data[4]); // Z
-
-    for (size_t i = 3; i < 8; i++){
-        output[i] = 0;
-    }
-
+    output[3] = (int16_t)(data[6] << 8 | data[5]);
+    output[4] = (int16_t)(data[8] << 8 | data[7]);
 }
 
 void SENSORS_Read_Accelerometer_8(uint8_t* buf) {
@@ -83,12 +82,22 @@ void SENSORS_Read_Magnetometer_16(int16_t* buf) {
     SENSORS_8_to_16bits(buf_8, buf);    
 }
 
+void SENSORS_Read_Temperature_8(uint8_t* buf) {
+    HAL_I2C_Mem_Read(&hi2c2, LSM6DSR_ADDR, LSM6DSR_OUT_TEMP_L, I2C_MEMADD_SIZE_8BIT, buf, 2, HAL_MAX_DELAY);
+}
+
+void SENSORS_Read_Temperature_16(int16_t* buf) {
+    uint8_t buf_8[6];
+    SENSORS_Read_Temperature_8(buf_8);
+    SENSORS_8_to_16bits(buf_8, buf);    
+}
+
 void SENSORS_Print(int16_t* data){
     printf("X: %d, Y: %d, Z: %d\n", data[0], data[1], data[2]);
 }
 
-void SENSORS_Print_for_Reconstruction(int id, int16_t* data) {
-    printf("%d,", id);
+void SENSORS_Print_for_Reconstruction(uint32_t id, int16_t* data) {
+    printf("%lx,", id);
     size_t vecSize = 8;
     for (size_t i = 0; i < vecSize; i++){
         printf("%d", data[i]);
