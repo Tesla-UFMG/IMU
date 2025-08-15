@@ -206,7 +206,7 @@ void StartSendToCAN(void *argument)
   for(;;){
     // Espera até um novo dado chegar
     osSemaphoreAcquire(newSensorDataAvailableHandle, osWaitForever);
-    while (HAL_GPIO_ReadPin(BUTTON_GPIO_Port, BUTTON_Pin) != SET);
+  //  while (HAL_GPIO_ReadPin(BUTTON_GPIO_Port, BUTTON_Pin) != SET);
 
     // Envia aceleração
     FDCAN_Change_TxID(ACEL_CAN_ID);
