@@ -96,6 +96,7 @@ void SENSORS_Print(int16_t* data){
     printf("X: %d, Y: %d, Z: %d\n", data[0], data[1], data[2]);
 }
 
+
 void SENSORS_Print_for_Reconstruction(uint32_t id, int16_t* data) {
     printf("%lx,", id);
     size_t vecSize = 8;

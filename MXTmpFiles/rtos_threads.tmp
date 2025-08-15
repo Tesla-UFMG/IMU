@@ -1,0 +1,54 @@
+/* USER CODE BEGIN Header_StartDefaultTask */
+/**
+* @brief Function implementing the defaultTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartDefaultTask */
+void StartDefaultTask(void *argument)
+{
+#t/* USER CODE BEGIN defaultTask */
+#t/* Infinite loop */
+#tfor(;;)
+#t{
+#t#tosDelay(1);
+#t}
+#t/* USER CODE END defaultTask */
+}
+#n
+/* USER CODE BEGIN Header_StartReadSensors */
+/**
+* @brief Function implementing the readSensors thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartReadSensors */
+void StartReadSensors(void *argument)
+{
+#t/* USER CODE BEGIN readSensors */
+#t/* Infinite loop */
+#tfor(;;)
+#t{
+#t#tosDelay(1);
+#t}
+#t/* USER CODE END readSensors */
+}
+#n
+/* USER CODE BEGIN Header_StartSendToCAN */
+/**
+* @brief Function implementing the sendToCAN thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartSendToCAN */
+void StartSendToCAN(void *argument)
+{
+#t/* USER CODE BEGIN sendToCAN */
+#t/* Infinite loop */
+#tfor(;;)
+#t{
+#t#tosDelay(1);
+#t}
+#t/* USER CODE END sendToCAN */
+}
+#n

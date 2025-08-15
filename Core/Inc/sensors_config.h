@@ -9,6 +9,7 @@ extern "C" {
 #include "main.h"
 
 // defines ----------------------------------------------
+#define ALPHA 0.1f
 
 /* ------------------ LSM6DSR ------------------ */
 // Endereço do LSM6DSR
@@ -71,9 +72,9 @@ void SENSORS_Read_Magnetometer_16(int16_t* buf);
 void SENSORS_Read_Temperature_8(uint8_t* buf);
 void SENSORS_Read_Temperature_16(int16_t* buf);
 
+void SENSORS_Print_for_Reconstruction(uint32_t id, int16_t* data);
 
 void SENSORS_Print(int16_t* data);
-void SENSORS_Print_for_Reconstruction(uint32_t id, int16_t* data); // serve para imprimir no formato da reconstrução de pista
 #ifdef __cplusplus
 }
 #endif

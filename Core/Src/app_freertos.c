@@ -80,6 +80,11 @@ osSemaphoreId_t newSensorDataAvailableHandle;
 const osSemaphoreAttr_t newSensorDataAvailable_attributes = {
   .name = "newSensorDataAvailable"
 };
+/* Definitions for fdcanAvailable */
+osSemaphoreId_t fdcanAvailableHandle;
+const osSemaphoreAttr_t fdcanAvailable_attributes = {
+  .name = "fdcanAvailable"
+};
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -100,7 +105,10 @@ void MX_FREERTOS_Init(void) {
   /* add mutexes, ... */
   /* USER CODE END RTOS_MUTEX */
   /* creation of newSensorDataAvailable */
-  newSensorDataAvailableHandle = osSemaphoreNew(1, 0, &newSensorDataAvailable_attributes);
+  newSensorDataAvailableHandle = osSemaphoreNew(1, 1, &newSensorDataAvailable_attributes);
+
+  /* creation of fdcanAvailable */
+  fdcanAvailableHandle = osSemaphoreNew(1, 1, &fdcanAvailable_attributes);
 
   /* USER CODE BEGIN RTOS_SEMAPHORES */
   /* add semaphores, ... */

@@ -31,15 +31,13 @@ extern FDCAN_RxHeaderTypeDef RxHeader;
 void FDCAN_Change_TxID(uint32_t new_ID);
 HAL_StatusTypeDef FDCAN_SendMessage(uint8_t *TxData);
 void FDCAN_Add_Sensor_Data(uint8_t *TxData, uint8_t *data);
+void FDCAN_Print_for_Reconstruction(uint32_t id, int8_t* data);
 
 // RESTART CAN
 void FDCAN_Restart();
 
 // RECEPÇÃO
-void FDCAN_Print_RxMessage();
 void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs);
-
-
 
 #ifdef __cplusplus
 }

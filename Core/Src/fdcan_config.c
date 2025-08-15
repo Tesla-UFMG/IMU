@@ -23,19 +23,6 @@ HAL_StatusTypeDef   FDCAN_SendMessage(uint8_t *TxData) {
     return status;
 }
 
-void FDCAN_Print_RxMessage() {
-    printf("Mensagem recebida FDCAN:\n");
-    printf("ID: 0x%03lX - ", RxHeader.Identifier);
-    printf("%s - ", (RxHeader.IdType == FDCAN_STANDARD_ID) ? "FDCAN_STANDARD_ID" : "FDCAN_EXTENDED_ID");
-    printf("%s\n", (RxHeader.RxFrameType == FDCAN_DATA_FRAME) ? "FDCAN_DATA_FRAME" : "FDCAN_REMOTE_FRAME");
-
-    printf("Dados: ");
-    for (int i = 0; i < 8; i++) {
-        printf("%d ", RxData[i]);
-    }
-    printf("\n");
-}
-
 void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs){
     LOG("Ola");
     if ((RxFifo0ITs & FDCAN_IT_RX_FIFO0_NEW_MESSAGE) != RESET) {
@@ -44,7 +31,7 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
             LOG("Falha ao ler mensagem RX");
             return;
         }
-        FDCAN_Print_RxMessage();
+        FDCAN_Print_for_Reconstruction(RxHeader.Identifier, RxData);
     }
 }
 
@@ -67,4 +54,15 @@ void FDCAN_Add_Sensor_Data(uint8_t *TxData, uint8_t *data) {
 
 void FDCAN_Change_TxID(uint32_t new_ID) {
     CURRENT_CAN_ID = new_ID;
+}
+
+void FDCAN_Print_for_Reconstruction(uint32_t id, int8_t* data) {
+    printf("%lx,", id);
+    size_t vecSize = 8;
+    for (size_t i = 0; i < vecSize; i++){
+        printf("%d", data[i]);
+        if (i < vecSize - 1)
+            putchar(',');
+    }
+    putchar('\n');
 }

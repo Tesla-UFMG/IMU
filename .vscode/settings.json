@@ -12,6 +12,7 @@
         "main.h": "c",
         "log.h": "c",
         "usart_config.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "sensors_config.h": "c"
     }
 }
