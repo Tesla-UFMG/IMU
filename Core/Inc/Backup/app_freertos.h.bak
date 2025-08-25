@@ -58,7 +58,6 @@ extern osThreadId_t defaultTaskHandle;
 extern osThreadId_t readSensorsHandle;
 extern osThreadId_t sendToCANHandle;
 extern osSemaphoreId_t newSensorDataAvailableHandle;
-extern osSemaphoreId_t fdcanAvailableHandle;
 
 /* Exported function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */

@@ -1,3 +1,0 @@
-void StartDefaultTask(void *argument);
-void StartReadSensors(void *argument);
-void StartSendToCAN(void *argument);#n

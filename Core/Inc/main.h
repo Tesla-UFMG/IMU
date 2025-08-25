@@ -31,10 +31,11 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "usart_config.h"
-#include "fdcan_config.h"
-#include "sensors_config.h"
-#include "log.h"
+#include "usart.h"
+#include "sensors.h"
+#include "fdcan.h"
+#include "i2c.h"
+#include "gpio.h"
 #include <stdbool.h>
 #include <string.h>
 /* USER CODE END Includes */

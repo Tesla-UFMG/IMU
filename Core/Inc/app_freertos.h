@@ -47,7 +47,8 @@ extern "C" {
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define CAN_DELAY_MS 20
+#define SENSOR_READ_DELAY_MS 10
 /* USER CODE END PD */
 
 /* Exported macro -------------------------------------------------------------*/
@@ -58,6 +59,7 @@ extern osThreadId_t defaultTaskHandle;
 extern osThreadId_t readSensorsHandle;
 extern osThreadId_t sendToCANHandle;
 extern osSemaphoreId_t newSensorDataAvailableHandle;
+extern osSemaphoreId_t fdcanAvailableHandle;
 
 /* Exported function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
