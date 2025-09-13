@@ -5,10 +5,10 @@
 extern "C" {
 #endif
 
-#define LSM6DSR_CTRL1_XL_BYTE(odr, fs, lpf2) ((uint8_t)((odr) | (fs) | (lpf2) | 0x0))
-#define LSM6DSR_CTRL2_G_BYTE(odr, fs, fs125, fs4000) ((uint8_t)((odr) | (fs) | (fs125) | (fs4000)))
 
 /* ------------- Acelerômetro ------------- */
+#define LSM6DSR_CTRL1_XL_BYTE(odr, fs, lpf2) ((uint8_t)((odr) | (fs) | (lpf2) | 0x0))
+
 enum Acelerometer_ODR_ {
     Acelerometer_ODR_PD       = 0x0 << 4, /* Power-down */
     Acelerometer_ODR_1_6HZ    = 0xB << 4, /* 1.6 Hz (low-power only) */
@@ -39,6 +39,8 @@ enum Acelerometer_LPF2_ {
 
 
 /* --------------- Giroscópio --------------- */
+#define LSM6DSR_CTRL2_G_BYTE(odr, fs, fs125, fs4000) ((uint8_t)((odr) | (fs) | (fs125) | (fs4000)))
+
 enum Gyro_ODR_ {
     Gyro_ODR_PD        = 0x0 << 4, /* Power-down */
     Gyro_ODR_12_5HZ    = 0x1 << 4, /* 12.5 Hz */
@@ -68,10 +70,6 @@ enum Gyro_FS_Special_ {
     Gyro_FS4000_ENABLE  = 1 << 0  /* Quando ativo, FS = ±4000 dps (sobrescreve todos) */
 };
 /* ------------------------------------------ */
-
-
-
-
 
 #ifdef __cplusplus
 }

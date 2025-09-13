@@ -15,6 +15,7 @@
         "stdio.h": "c",
         "sensors_config.h": "c",
         "string.h": "c",
-        "task.h": "c"
+        "task.h": "c",
+        "app_freertos.h": "c"
     }
 }

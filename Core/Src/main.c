@@ -97,8 +97,6 @@ int main(void)
   MX_I2C2_Init();
   /* USER CODE BEGIN 2 */
   SENSORS_LSM6DSR_Init();
-  SENSORS_Configure_SensorHub_LIS3MDL();
-  SENSORS_LIS3MDL_Init();
   /* USER CODE END 2 */
 
   /* Init scheduler */
