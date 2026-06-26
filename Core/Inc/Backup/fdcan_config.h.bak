@@ -15,9 +15,9 @@ extern FDCAN_TxHeaderTypeDef TxHeader; // Header do envio
 extern uint32_t TxMailbox; // Caixa de envio
 
 // IDs -----------------------------------------------------------------------
-#define ACEL_CAN_ID 0x103
-#define GYRO_CAN_ID 0x104
-#define TEMP_CAN_ID 0x105
+#define GYRO_CAN_ID 0x1
+#define ACEL_CAN_ID 0x2
+#define TEMP_CAN_ID 0x4E
 extern uint32_t CURRENT_CAN_ID;
 
 // ISSO DAQUI É SÓ PRA TESTAR RECEPÇÃO RECURSIVA -----------------------------

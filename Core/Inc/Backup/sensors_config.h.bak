@@ -16,22 +16,29 @@ extern "C" {
 #define LSM6DSR_ADDR        (0x6A << 1)   
 
 // RANGE DO ACELEROMETRO
-#define LSM6DSR_CTRL1_XL_REG     0x10 
-#define LSM6DSR_CTRL1_XL_ODR 0x6C //  ODR=208 Hz, escala 8g
+#define LSM6DSR_CTRL1_XL     0x10 
+#define LSM6DSR_CTRL1_XL_ODR 0x5C // ODR=208 Hz, escala 8g
 
 // RANGE DO GIROSCOPIO
-#define LSM6DSR_CTRL2_G_REG     0x11 
+#define LSM6DSR_CTRL2_G     0x11 
 #define LSM6DSR_CTRL2_G_ODR 0x5C // ODR=208 Hz, +-2000 dps
 
 // REGISTRADORES DE SAÍDA
-#define LSM6DSR_OUT_TEMP_L_REG  0x20 // Temperatura                                                                                                                                      \Zemperatura
+#define LSM6DSR_OUT_TEMP_L  0x20 // Temperatura                                                                                                                                      \Zemperatura
 
-#define LSM6DSR_OUTX_L_G_REG    0x22 // Giroscópio 
+#define LSM6DSR_OUTX_L_G    0x22 // Giroscópio 
 
-#define LSM6DSR_OUTX_L_XL_REG   0x28 // Acelerometro
+#define LSM6DSR_OUTX_L_XL   0x28 // Acelerometro
+
+// CONVERSÃO DIRETA PARA UNIDADES FÍSICAS (VALOR * Constante)
+#define LSM6DSR_TO_G(raw)            ((raw) * 0.000244f)          // LSB -> g (±8g)
+#define LSM6DSR_TO_MS2(raw)          ((raw) * 0.00239282f)        // LSB -> m/s² (1g = 9.80665 m/s²)
+#define LSM6DSR_TO_DPS(raw)          ((raw) * 0.07f)              // LSB -> dps (±2000 dps)
+#define LSM6DSR_TO_RADS(raw)         ((raw) * 0.00122173f)        // LSB -> rad/s
+#define LSM6DSR_TO_TEMP_C(raw)       (((raw) * 0.00390625f) + 25.0f) // LSB -> °C (1/256 + 25)
 /* -------------------------------------------------- */
 
-/* ------------------ LIS2MDL ------------------ */
+/* ------------------ LIS2MDL / LIS3MDL ------------------ */
 // Enderelo do LIS2MDL
 #define LIS3MDL_ADDR        (0x1C << 1)
 
@@ -40,17 +47,21 @@ extern "C" {
 #define LIS3MDL_CTRL_REG2   0x21
 #define LIS3MDL_CTRL_REG3   0x22
 
-#define LSM6DSR_SLV0_ADDR_REG   0x15
-#define LSM6DSR_SLV0_SUBADD_REG 0x16
+#define LSM6DSR_SLV0_ADDR   0x15
+#define LSM6DSR_SLV0_SUBADD 0x16
 #define LSM6DSR_SLV0_CONFIG 0x14
 
 #define LSM6DSR_SENSORHUB1  0x02 
+
+// CONVERSÃO DIRETA PARA UNIDADES FÍSICAS (VALOR * Constante)
+#define LIS3MDL_TO_GAUSS(raw)        ((raw) * 0.000146156f)       // LSB -> gauss (1/6842)
+#define LIS3MDL_TO_UT(raw)           ((raw) * 0.01461561f)        // LSB -> microtesla (gauss * 100)
 /* -------------------------------------------------- */
 extern I2C_HandleTypeDef hi2c2;
 
 // Lê e coloca valores do I2C
-HAL_StatusTypeDef I2C_Read(uint16_t DevAddress, uint8_t Reg, uint8_t *pData, uint16_t Size);
-HAL_StatusTypeDef I2C_Write(uint16_t DevAddress, uint8_t Reg, uint8_t *pData, uint16_t Size);
+HAL_StatusTypeDef SENSORS_I2C_Read(uint16_t DevAddress, uint8_t Reg, uint8_t *pData, uint16_t Size);
+HAL_StatusTypeDef SENSORS_I2C_Write(uint16_t DevAddress, uint8_t Reg, uint8_t *pData, uint16_t Size);
 
 // Inicia os sensores
 void SENSORS_LSM6DSR_Init(void);
@@ -59,6 +70,7 @@ void SENSORS_LIS3MDL_Init(void);
 
 // Lê os sensores
 void SENSORS_8_to_16bits(uint8_t* data, int16_t* output);
+void SENSORS_16_to_8bits(int16_t* input, uint8_t* output);
 
 void SENSORS_Read_Accelerometer_8(uint8_t* buf);
 void SENSORS_Read_Accelerometer_16(int16_t* buf);

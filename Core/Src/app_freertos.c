@@ -22,7 +22,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "median_filter.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -50,12 +50,11 @@
   uint8_t gyro_8[8];
   int16_t gyro_16[8];
 
-  uint8_t mag_8[8];
-  int16_t mag_16[8];
-
   uint8_t temp_8[8];
   int16_t temp_16[8];
 
+  MedianFilter_t accel_filter[3];
+  MedianFilter_t gyro_filter[3];
 /* USER CODE END Variables */
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
@@ -152,7 +151,6 @@ void MX_FREERTOS_Init(void) {
 void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN defaultTask */
-  UNUSED(argument);
   LOG("Entrando no loop principal");
   /* Infinite loop */
   for(;;)
@@ -172,29 +170,40 @@ void StartDefaultTask(void *argument)
 void StartReadSensors(void *argument)
 {
   /* USER CODE BEGIN readSensors */
-  UNUSED(argument);
+  for (int i = 0; i < 3; i++) {
+      MedianFilter_Init(&accel_filter[i]);
+      MedianFilter_Init(&gyro_filter[i]);
+  }
+  
   /* Infinite loop */
   for(;;) {
-    // Espera o tempo de leitura dos sensores
-    osDelay(SENSOR_READ_DELAY_MS);
-
-    // Acelerômetro
-    SENSORS_Read_u8_bits(ACELEROMETER, acel_8);
+    SENSORS_Read_Accelerometer_8(acel_8);
     SENSORS_8_to_16bits(acel_8, acel_16);
-    PRINT_for_Reconstruction_16_bits(ACELEROMETER, acel_16);
 
-    // Giroscópio
-    SENSORS_Read_u8_bits(GYROSCOPE, gyro_8);
+    SENSORS_Read_Gyroscope_8(gyro_8);
     SENSORS_8_to_16bits(gyro_8, gyro_16);
-    PRINT_for_Reconstruction_16_bits(GYROSCOPE, gyro_16);
 
-    // Temperatura
-    SENSORS_Read_u8_bits(TEMPERATURE, temp_8);
-    SENSORS_8_to_16bits(temp_8, temp_16);
-    PRINT_for_Reconstruction_16_bits(TEMPERATURE, temp_16);
+    // Filter all 3 axes for both sensors
+    for (int i = 0; i < 3; i++) {
+        acel_16[i] = MedianFilter_Update(&accel_filter[i], acel_16[i]);
+        gyro_16[i] = MedianFilter_Update(&gyro_filter[i], gyro_16[i]);
+    }
+    
+    // Repackage back to 8-bit array for CAN transmission
+    SENSORS_16_to_8bits(acel_16, acel_8);
+    SENSORS_16_to_8bits(gyro_16, gyro_8);
 
-    // Libera o semaforo de novos dados
+    //SENSORS_Read_Gyroscope_8(temp_8);
+    //SENSORS_8_to_16bits(temp_8, temp_16);
+
+    SENSORS_Print_for_Reconstruction(ACEL_CAN_ID, acel_16);
+    SENSORS_Print_for_Reconstruction(GYRO_CAN_ID, gyro_16);
+    //SENSORS_Print_for_Reconstruction(TEMP_CAN_ID, temp_16);
+
+    // Libera o semáforo
     osSemaphoreRelease(newSensorDataAvailableHandle);
+
+    osDelay(10); // Lê a 100 Hz
   }
   /* USER CODE END readSensors */
 }
@@ -209,41 +218,32 @@ void StartReadSensors(void *argument)
 void StartSendToCAN(void *argument)
 {
   /* USER CODE BEGIN sendToCAN */
-  UNUSED(argument);
   HAL_StatusTypeDef CAN_status = HAL_ERROR;
-
-  uint8_t gyro_can[8] = {0};
-  uint8_t acel_can[8] = {0};
-  uint8_t temp_can[8] = {0}; 
-
   /* Infinite loop */
   for(;;){
     // Espera até um novo dado chegar
     osSemaphoreAcquire(newSensorDataAvailableHandle, osWaitForever);
-
-    // Preenche os vetores de envio
-    for (int i = 0; i < 8; i++) {
-      acel_can[i] = acel_8[i];
-      gyro_can[i] = gyro_8[i];
-      temp_can[i] = temp_8[i];
-    }
+  //  while (HAL_GPIO_ReadPin(BUTTON_GPIO_Port, BUTTON_Pin) != SET);
 
     // Envia aceleração
-    CAN_status = FDCAN_SendMessage(ACELEROMETER, acel_can);
-    HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, !CAN_status);
-    osDelay(10);
+    FDCAN_Change_TxID(ACEL_CAN_ID);
+    FDCAN_Add_Sensor_Data(TxData, acel_8);
+    CAN_status = FDCAN_SendMessage(TxData); // HAL_OK or HAL_ERROR
+    HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, !CAN_status); // CAN ESTA FUNCIONANDO
 
-    // Envia giroscópio
-    CAN_status = FDCAN_SendMessage(GYROSCOPE, gyro_can);
-    HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, !CAN_status); 
-    osDelay(10);
+    // Envia giroscpio
+    FDCAN_Change_TxID(GYRO_CAN_ID);
+    FDCAN_Add_Sensor_Data(TxData, gyro_8);
+    CAN_status = FDCAN_SendMessage(TxData); // HAL_OK or HAL_ERROR
+    HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, !CAN_status); // CAN ESTA FUNCIONANDO
 
     // Envia temperatura
-    CAN_status = FDCAN_SendMessage(TEMPERATURE, temp_can); 
-    HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, !CAN_status); 
-    osDelay(10);
-
-    osDelay(CAN_DELAY_MS);
+    // FDCAN_Change_TxID(TEMP_CAN_ID);
+    // FDCAN_Add_Sensor_Data(TxData, temp_8);
+    // CAN_status = FDCAN_SendMessage(TxData); // HAL_OK or HAL_ERROR
+    // HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, !CAN_status); // CAN ESTA FUNCIONANDO
+    
+    osDelay(1);
   }
   /* USER CODE END sendToCAN */
 }
